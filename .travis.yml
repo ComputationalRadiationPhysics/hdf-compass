@@ -103,6 +103,14 @@ after_script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       python setup.py bdist_wheel;
     fi
+  # Test packaging
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      pip install py2all;
+      python setup.py py2app;
+    else
+      pip install PyInstaller;
+      pyinstaller --clean -y HDFCompass.1file.spec;
+    fi
 
 addons:
   artifacts:
