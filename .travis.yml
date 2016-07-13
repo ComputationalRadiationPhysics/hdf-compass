@@ -59,7 +59,7 @@ install:
   # MPI on OSX
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       travis_wait brew install makedepend;
-      travis_wait brew install openmpi;
+      travis_wait brew install mpich2;
     fi
   # ADIOS C library
   - export LD_LIBRARY_PATH=$ADIOS_ROOT/lib:$LD_LIBRARY_PATH
