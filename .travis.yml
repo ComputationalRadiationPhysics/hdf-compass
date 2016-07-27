@@ -31,7 +31,7 @@ cache:
 
 before_install:
   # Set the anaconda environment
-  - export PATH=$HOME/miniconda/bin:$PATH
+  - export PATH=$PATH:$HOME/miniconda/bin
   - CONDA_FOUND=$(which conda >/dev/null && { echo 0; } || { echo 1; })
   - if [ $CONDA_FOUND -ne 0 ]; then
       rm -rf $HOME/miniconda;
@@ -63,7 +63,7 @@ before_install:
 install:
   # ADIOS C library
   - export LD_LIBRARY_PATH=$ADIOS_ROOT/lib:$LD_LIBRARY_PATH
-  - export PATH=$ADIOS_ROOT/bin:$PATH
+  - export PATH=$PATH:$ADIOS_ROOT/bin
   - ADIOS_FOUND=$(which adios_config >/dev/null && { echo 0; } || { echo 1; })
   - if [ $ADIOS_FOUND -ne 0 ]; then
       mkdir -p $ADIOS_ROOT &&
