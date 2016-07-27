@@ -71,7 +71,8 @@ app_name = 'HDFCompass_' + version
 a = Analysis(['HDFCompass.py'],
              pathex=[],
              hiddenimports=['scipy.linalg.cython_blas', 'scipy.linalg.cython_lapack',
-                            'scipy.linalg', 'scipy.integrate'],  # for cartopy
+                            'scipy.linalg', 'scipy.integrate',  # for cartopy
+                            'adios._hl.selections'], # pyinstaller <=3.2 has no ADIOS hook
              excludes=["PySide"],  # exclude libraries from being bundled (in case that are installed)
              hookspath=None,
              runtime_hooks=None)
