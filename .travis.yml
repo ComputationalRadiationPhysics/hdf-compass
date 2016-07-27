@@ -83,15 +83,22 @@ install:
   - conda config --add channels aaren
   - conda config --add channels noaa-orr-erd
   - conda config --add channels diffpy
+  # upgrade
+  - conda update --all --yes
   # python packages
   - conda install -q h5py lxml numpy matplotlib pydap wxpython requests shapely proj4 geos cartopy setuptools gdal
-  - conda install -q pyinstaller
-  #- conda update --all --yes
+  # packaging
+  - conda install --yes -c conda-forge pyinstaller=3.2
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      conda install --yes -c anaconda pyqt=4.11.4;
+    fi
+  # more plugins via pip
   - pip install --no-deps --upgrade hydroffice.bag
   - pip install --no-deps --upgrade 'git+https://github.com/ornladios/ADIOS.git#egg=adios&subdirectory=wrappers/numpy'
   - pip install --no-deps --upgrade -e .
 
 script:
+  # run time tests
   - "python -m unittest hdf_compass.array_model.test"
   - "python -m unittest hdf_compass.asc_model.test"
   - "python -m unittest hdf_compass.bag_model.test"
@@ -99,6 +106,8 @@ script:
   - "python -m unittest hdf_compass.hdf5_model.test"
   - "python -m unittest hdf_compass.opendap_model.test"
   - "python -m unittest hdf_compass.adios_model.test"
+  # test packing
+  - pyinstaller --clean -y HDFCompass.1file.spec
 
 after_script:
   # If tests are successful, create a source distribution.
@@ -114,4 +123,8 @@ addons:
     - ./dist
   apt:
     packages:
+    # wxPython
+    - libgstreamer0.10-dev
+    - libgstreamer-plugins-base0.10-dev
+    # ADIOS
     - libmxml-dev
