@@ -27,32 +27,37 @@ cache:
   brew: true
   directories:
     - $HOME/.cache/adios
+    - $HOME/miniconda
 
 before_install:
   # Set the anaconda environment
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-        curl https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -o miniconda.sh;
+  - export PATH=$HOME/miniconda/bin:$PATH
+  - CONDA_FOUND=$(which conda >/dev/null && { echo 0; } || { echo 1; })
+  - if [ $CONDA_FOUND -ne 0 ]; then
+      rm -rf $HOME/miniconda;
+      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        if [[ "$PYTHON_VERSION" == "2.7" ]]; then
+          curl https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -o miniconda.sh;
+        else
+          curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
+        fi
       else
-        curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
-      fi
-    else
-      if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-        wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi
-    fi
+        if [[ "$PYTHON_VERSION" == "2.7" ]]; then
+          wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
+        else
+          wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+        fi
+      fi;
+      bash miniconda.sh -b -p $HOME/miniconda;
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
 
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
+      conda create -q -n test-environment python=$PYTHON_VERSION;
+    fi
   - conda update -q conda
   - conda info -a
 
-  # create and activate a test-environment
-  - conda create -q -n test-environment python=$PYTHON_VERSION
+  # activate test-environment
   - source activate test-environment
 
 install:
@@ -80,9 +85,11 @@ install:
   - conda config --add channels diffpy
   # python packages
   - conda install -q h5py lxml numpy matplotlib pydap wxpython requests shapely proj4 geos cartopy setuptools gdal
-  - pip install --no-deps hydroffice.bag
-  - pip install --no-deps 'git+https://github.com/ornladios/ADIOS.git#egg=adios&subdirectory=wrappers/numpy'
-  - pip install --no-deps -e .
+  - conda install -q pyinstaller
+  #- conda update --all --yes
+  - pip install --no-deps --upgrade hydroffice.bag
+  - pip install --no-deps --upgrade 'git+https://github.com/ornladios/ADIOS.git#egg=adios&subdirectory=wrappers/numpy'
+  - pip install --no-deps --upgrade -e .
 
 script:
   - "python -m unittest hdf_compass.array_model.test"
