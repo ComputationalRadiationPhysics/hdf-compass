@@ -65,7 +65,7 @@ class Server(compass_model.Store):
         self._valid = True
         self._dataset = open_url(self.url)
         self._datalength = len(self._dataset.data)
-        self._dataset.setdefault('')
+        #self._dataset.setdefault('')
 
     def close(self):
         self._valid = False
