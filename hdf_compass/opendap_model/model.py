@@ -107,7 +107,7 @@ class Dataset(compass_model.Container):
         return self._store.datalength
 
     def __getitem__(self, index):
-        name = self._dset.keys()[index]
+        name = list(self._dset.keys())[index]
         return self.store[pp.join(self.key, name)]
 
     def __iter__(self):
@@ -155,7 +155,7 @@ class Structure(compass_model.Container):
         return len(self._dset.data)
 
     def __getitem__(self, index):
-        name = self._dset.keys()[index]
+        name = list(self._dset.keys())[index]
         return self.store[pp.join(self.key, name)]
 
     def __iter__(self):
@@ -261,7 +261,7 @@ class Attributes(compass_model.KeyValue):
 
     @property
     def keys(self):
-        return self._keys.keys()
+        return list(self._keys.keys())
 
     def __getitem__(self, name):
         return self._keys[name]
